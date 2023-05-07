@@ -86,7 +86,6 @@ class Car(Base):
     make = Column(String, index=True)
     model = Column(String, index=True)
     year = Column(String, index=True)
-    code = Column(Numeric, index=True)
     create_date = Column(DateTime, index=True)
     update_date = Column(DateTime, index=True)
     
