@@ -20,7 +20,7 @@ def generate(user_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends
     return service.create_token(user_id)
 
 @router.get('/{token_id}', response_model=List[Token])
-def read_token(token_id: int,skip: int = 0, limit: int = 100, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+def read_token(token_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     auth.jwt_required()
     service = TokenService(db)
     users = service.get_token_by_id(token_id)

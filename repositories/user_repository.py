@@ -72,8 +72,8 @@ class UserRepository:
         return self.session.query(User).filter(User.id == user_id).first()
 
     # ----------- Get all users--------------
-    def get_users(self, skip: int = 0, limit: int = 100) -> List[User]:
-        return self.session.query(User).offset(skip).limit(limit).all()
+    def get_users(self) -> List[User]:
+        return self.session.query(User).all()
     
     # ----------- Authenticate User--------------
     def authenticate_user(self, username: str, password: str) -> int:

@@ -17,8 +17,8 @@ class VisitorRepository:
     def get_visitor_by_userId(self, user_id: int):
         return self.session.query(Visitor).filter(Visitor.user_id == user_id).all()
     
-    def get_visitors(self, skip: int = 0, limit: int = 100):
-        return self.session.query(Visitor).offset(skip).limit(limit).all()
+    def get_visitors(self):
+        return self.session.query(Visitor).all()
 
     def create_visitor(self, visitor: VisitorCreate):
         db_visitor = Visitor(**visitor.dict())

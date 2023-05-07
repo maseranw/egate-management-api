@@ -11,10 +11,6 @@ router = APIRouter(prefix="/api", tags=["tenant"])
 @router.post("/tenants", response_model=Tenant)
 def create_tenant_api(tenant: TenantCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     auth.jwt_required()
-    # try:
-    #     Authorize.jwt_required()
-    # except JWTError:
-    #     raise HTTPException(status_code=401, detail="Invalid or missing token")
     service = TenantService(db)
     return service.create_tenant(tenant)
 

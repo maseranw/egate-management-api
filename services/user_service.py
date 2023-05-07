@@ -15,8 +15,8 @@ class UserService:
     def get_user(self, user_id: int) -> User:
         return self.user_repository.get_user(user_id)
 
-    def get_users(self, skip: int = 0, limit: int = 100) -> List[User]:
-        return self.user_repository.get_users(skip, limit)
+    def get_users(self) -> List[User]:
+        return self.user_repository.get_users()
 
     def update_user(self, user_id: int, updated_user: UserUpdate) -> User:
         return self.user_repository.update_user(user_id, updated_user)
