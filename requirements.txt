@@ -1,0 +1,13 @@
+bcrypt
+fastapi
+sqlalchemy
+fastapi_jwt_auth
+alembic
+uvicorn
+numpy
+joblib
+nltk
+scikit-learn
+llama-index
+python-jose
+python-dotenv
