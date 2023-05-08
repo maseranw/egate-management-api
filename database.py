@@ -64,11 +64,11 @@ class Visitor(Base):
     check_in_time = Column(DateTime, index=True, default=None)
     check_out_time = Column(DateTime, index=True, default=None)
     tenant = relationship("Tenant", back_populates="visitors")
-    tokens = relationship("Token", back_populates="visitor")
+    access_codes = relationship("AccessCode", back_populates="visitor")
 
     
-class Token(Base):
-    __tablename__ = "tokens"
+class AccessCode(Base):
+    __tablename__ = "access_codes"
     metadata = metadata
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     visitor_id = Column(Integer, ForeignKey("visitors.id"), index=True)
@@ -76,7 +76,7 @@ class Token(Base):
     create_date = Column(DateTime, index=True)
     update_date = Column(DateTime, index=True)
     expiry_date = Column(DateTime, index=True)
-    visitor = relationship("Visitor", back_populates="tokens")
+    visitor = relationship("Visitor", back_populates="access_codes")
 
 
 class Car(Base):

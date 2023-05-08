@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class TokenBase(BaseModel):
+class AccessCodeBase(BaseModel):
     visitor_id: int
     code: int
     create_date: datetime
@@ -14,16 +14,16 @@ class TokenBase(BaseModel):
         return self.expiry_date < datetime.now()
 
 
-class TokenCreate(BaseModel):
+class AccessCodeCreate(BaseModel):
     visitor_id: int
     
 
-class TokenUpdate(BaseModel):
+class AccessCodeUpdate(BaseModel):
     visitor_id: int = None
     expiry_date: datetime = None
     
 
-class Token(TokenBase):
+class AccessCode(AccessCodeBase):
     id: int
     class Config:
         orm_mode = True

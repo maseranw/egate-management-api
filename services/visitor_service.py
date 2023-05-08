@@ -1,16 +1,16 @@
 from typing import List
 from sqlalchemy.sql.expression import Tuple
 from sqlalchemy.orm import Session
-from database import Token
+from database import AccessCode
 from schemas.visitor import Visitor, VisitorCreate, VisitorUpdate
-from schemas.visitor_token import VisitorToken
-from repositories.token_repository import TokenRepository
+from schemas.visitor_access_code import VisitorAccessCode
+from repositories.access_code_repository import AccessCodeRepository
 from repositories.visitor_repository import VisitorRepository
 
 class VisitorService:
     def __init__(self, session: Session):
         self.visitor_repository = VisitorRepository(session)
-        self.token_repository = TokenRepository(session)
+        self.access_code_repository = AccessCodeRepository(session)
         
     def get_visitor(self, visitor_id: int) -> Visitor:
         return self.visitor_repository.get_visitor(visitor_id)
@@ -21,10 +21,10 @@ class VisitorService:
     def get_visitors(self) -> List[Visitor]:
         return self.visitor_repository.get_visitors()
     
-    def create_visitor(self, visitor: VisitorCreate) -> VisitorToken:
+    def create_visitor(self, visitor: VisitorCreate) -> VisitorAccessCode:
         visitor =  self.visitor_repository.create_visitor(visitor)
-        token = self.token_repository.create_token(visitor.id)
-        return VisitorToken(visitor=visitor,token=token)
+        access_code = self.access_code_repository.create_access_code(visitor.id)
+        return VisitorAccessCode(visitor=visitor,access_code=access_code)
     
     def update_visitor(self,visitor_id: int, visitor: VisitorUpdate) -> Visitor:
         return self.visitor_repository.update_visitor(visitor_id,visitor)

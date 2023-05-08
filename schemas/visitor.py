@@ -1,19 +1,16 @@
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
-from schemas.token import Token
+from schemas.access_code import AccessCode
 
 
 class VisitorBase(BaseModel):
-    car_id: int = None
     tenant_id: int = None
+    phone: str
 
 
 class VisitorCreate(VisitorBase):
-    phone: str
-    class Config:
-        orm_mode = True
-
+    pass
 
 class VisitorUpdate(VisitorBase):
     phone: str = None
@@ -29,11 +26,11 @@ class VisitorResponse(VisitorBase):
 class Visitor(BaseModel):
     id: int = None
     phone: Optional[str]
+    car_id: Optional[int] = None
     create_date: Optional[datetime]
     update_date: datetime = None
     check_in_time: datetime = None
     check_out_time: datetime = None
-    tokens: List[Token]
     tenant_id: int
     class Config:
         orm_mode = True

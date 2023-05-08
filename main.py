@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.exceptions import HTTPException as FastAPIHTTPException
-from jose.exceptions import JWTError
 from fastapi_jwt_auth import AuthJWT
 from jwt_secret import JWTSettings
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,7 +10,7 @@ from pydantic.error_wrappers import ValidationError as PydanticValidationError
 
 # Importing the different routers for the different routes
 from routes.auth import router as auth_router
-from routes.token import router as token_router
+from routes.access_code import router as token_router
 from routes.visitor import router as visitor_router
 from routes.tenant import router as tenant_router
 from routes.chat import router as chat_router

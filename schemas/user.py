@@ -34,6 +34,5 @@ class User(UserBase):
     id: int
     create_date: datetime
     update_date: datetime = None
-    tenants: List[Tenant]
     class Config:
         orm_mode = True

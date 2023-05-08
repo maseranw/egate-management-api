@@ -3,16 +3,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from fastapi_jwt_auth import AuthJWT
 from database import  get_db
-from schemas.token import Token
+from schemas.access_code import AccessCode
 from schemas.visitor import Visitor, VisitorCreate, VisitorUpdate
-from schemas.visitor_token import VisitorToken
+from schemas.visitor_access_code import VisitorAccessCode
 from services.visitor_service import VisitorService
 
 router = APIRouter(prefix="/api", tags=["visitor"])
 
-@router.post("/visitors", response_model=VisitorToken)
+@router.post("/visitors", response_model=VisitorAccessCode)
 def create_visitor_api(visitor: VisitorCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+    # auth.jwt_required()
     service = VisitorService(db)
     return service.create_visitor(visitor)
 
