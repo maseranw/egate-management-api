@@ -19,7 +19,7 @@ def create_visitor_api(visitor: VisitorCreate, db: Session = Depends(get_db),aut
 
 @router.get("/visitors", response_model=List[Visitor])
 def get_visitors_api(db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+    # auth.jwt_required()
     service = VisitorService(db)
     return service.get_visitors()
 

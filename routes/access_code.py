@@ -21,18 +21,18 @@ def read_access_code(access_code_id: int, db: Session = Depends(get_db),auth: Au
 
 @router.get("/visitor/{visitor_id}", response_model=List[AccessCode])
 def read_user(visitor_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+    # auth.jwt_required()
     service = AccessCodeService(db)
     access_codes = service.get_access_codes_by_visitor_id(visitor_id)
     return access_codes
 
-@router.get("/user/{user_id}", response_model=List[AccessCode])
-def read_user(user_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+@router.get("/tenant/{tenant_id}")
+def read_user(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+    # auth.jwt_required()
     service = AccessCodeService(db)
-    user_service = UserService(db)
-    db_user = user_service.get_user(user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    access_codes = service.get_access_codes_by_user_id(user_id)
+    tenant_service = TenantService(db)
+    db_tenant = tenant_service.get_tenant(tenant_id)
+    if db_tenant is None:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    access_codes = service.get_access_codes_by_tenant_id(tenant_id)
     return access_codes

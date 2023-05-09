@@ -21,8 +21,11 @@ class VisitorService:
     def get_visitors(self) -> List[Visitor]:
         return self.visitor_repository.get_visitors()
     
-    def create_visitor(self, visitor: VisitorCreate) -> VisitorAccessCode:
-        visitor =  self.visitor_repository.create_visitor(visitor)
+    
+    def create_visitor(self, visitor_create: VisitorCreate) -> VisitorAccessCode:
+        visitor = self.visitor_repository.get_visitor_by_phone(visitor_create.phone)
+        if visitor is None:
+            visitor =  self.visitor_repository.create_visitor(visitor_create)
         access_code = self.access_code_repository.create_access_code(visitor.id)
         return VisitorAccessCode(visitor=visitor,access_code=access_code)
     

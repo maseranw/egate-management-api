@@ -20,3 +20,9 @@ class AccessCodeService:
     def get_access_codes_by_visitor_id(self, visitor_id: int) -> List[AccessCode]:
         return self.AccessCode_repository.get_access_codes_by_visitor_id(visitor_id)
     
+    def get_access_codes_by_tenant_id(self, tenant_id: int) -> List[AccessCode]:
+        return self.AccessCode_repository.get_access_codes_by_tenant_id(tenant_id)
+    
+    
+    
+    

@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
-from schemas.access_code import AccessCode
 
+from schemas.access_code import AccessCode
 
 class VisitorBase(BaseModel):
     tenant_id: int = None
@@ -31,6 +31,7 @@ class Visitor(BaseModel):
     update_date: datetime = None
     check_in_time: datetime = None
     check_out_time: datetime = None
+    access_codes: List[AccessCode]
     tenant_id: int
     class Config:
         orm_mode = True

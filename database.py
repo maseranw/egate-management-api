@@ -56,7 +56,7 @@ class Visitor(Base):
     __tablename__ = "visitors"
     metadata = metadata
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    phone = Column(String, index=True)
+    phone = Column(String, index=True, unique=True, )
     tenant_id = Column(Integer, ForeignKey("tenants.id"), index=True)
     car_id = Column(Integer, index=True)
     create_date = Column(DateTime, index=True, default=datetime.datetime.now())

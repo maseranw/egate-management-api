@@ -25,6 +25,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:8080",
+    "http://localhost:58875",
 ]
 
 # Add CORS middleware
@@ -48,6 +49,7 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
         status_code=exc.status_code,
         content={"message": exc.message}
     )
+
 
 # Include all routers for their respective routes
 app.include_router(user_router)
