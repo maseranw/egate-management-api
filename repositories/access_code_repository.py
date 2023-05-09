@@ -37,18 +37,20 @@ class AccessCodeRepository:
     def get_access_codes_by_visitor_id(self, visitor_id: str) -> List[AccessCode]:
         return self.session.query(AccessCode).filter(AccessCode.visitor_id == visitor_id).all()
 
-    def get_access_codes_by_tenant_id(self,tenant_id: int):
+    def get_access_codes_by_tenant_id(self, tenant_id: int):
         today = datetime.now().date()
         visitors = (
-                    self.session.query(Visitor)
-                    .filter(
-                        and_(
-                            Visitor.tenant_id == tenant_id,
-                            Visitor.create_date >= today,
-                            Visitor.create_date < today + timedelta(days=1),
-                        )
-                    )
-                    .all()
+            self.session.query(Visitor)
+            .filter(
+                and_(
+                    Visitor.tenant_id == tenant_id,
+                    Visitor.create_date >= today,
+                    Visitor.create_date < today + timedelta(days=1),
                 )
-        return [(visitor.phone, visitor.access_codes[-1].code) for visitor in visitors]
-            
+            )
+            .all()
+        )
+        access_codes = [{"phone": visitor.phone, "time": visitor.access_codes[-1].create_date.strftime('%H:%M'), "access_code": visitor.access_codes[-1].code}
+                        for visitor in visitors
+                        ] 
+        return access_codes

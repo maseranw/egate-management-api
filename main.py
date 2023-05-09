@@ -25,6 +25,7 @@ origins = [
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:58875",
+    "http://localhost:59989",
 ]
 
 # Add CORS middleware
@@ -37,11 +38,15 @@ app.add_middleware(
 )
 
 # Load JWT config
+
+
 @AuthJWT.load_config
 def get_config():
     return JWTSettings()
 
 # Handle AuthJWTExceptions
+
+
 @app.exception_handler(AuthJWTException)
 def authjwt_exception_handler(request: Request, exc: AuthJWTException):
     return JSONResponse(
