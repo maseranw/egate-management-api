@@ -36,6 +36,30 @@ class User(Base):
     update_date = Column(DateTime, index=True)
     tenants = relationship("Tenant", back_populates="user")
 
+class SupportTicket(Base):
+    __tablename__ = "support_tickets"
+    metadata = metadata
+    id = Column(Integer, primary_key=True, index=True,autoincrement=True)
+    type_id = Column(Integer, ForeignKey("support_ticket_types.id"),index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), index=True)
+    description = Column(String)
+    status = Column(String)
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    update_date = Column(DateTime, index=True, default=None)
+    ticket_type = relationship("SupportTicketType", back_populates="tickets")
+    tenant = relationship("Tenant", back_populates="tickets")
+
+
+class SupportTicketType(Base):
+    __tablename__ = "support_ticket_types"
+    metadata = metadata
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    create_date = Column(DateTime, index=True, default=datetime.datetime.now())
+    update_date = Column(DateTime, index=True, default=None)
+    tickets = relationship("SupportTicket", back_populates="ticket_type")
+    
     
 class Tenant(Base):
     __tablename__ = "tenants"
@@ -51,6 +75,7 @@ class Tenant(Base):
     user_id = Column(Integer, ForeignKey("users.id"), index=True)
     user = relationship("User", back_populates="tenants")
     visitors = relationship("Visitor", back_populates="tenant")
+    tickets = relationship("SupportTicket", back_populates="tenant")
 
 class Visitor(Base):
     __tablename__ = "visitors"

@@ -7,11 +7,11 @@ from database import get_db
 from schemas.user import User
 from services.user_service import UserService
 
-router = APIRouter(prefix="/api", tags=["user"])
+router = APIRouter(prefix="/api", tags=["User"])
 
 @router.post('/users', response_model=User)
 def create_user(user: UserCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     user_service = UserService(db)
     db_user = user_service.get_user(user.id)
     if db_user:
@@ -20,7 +20,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db),auth: AuthJWT = 
 
 @router.put("/users/{user_id}", response_model=User)
 def update_user(user_id: int,user: UserUpdate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     user_service = UserService(db)
     db_user = user_service.get_user(user_id)
     if not db_user:
@@ -29,14 +29,14 @@ def update_user(user_id: int,user: UserUpdate, db: Session = Depends(get_db),aut
 
 @router.get('/users', response_model=List[User])
 def read_users(db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     user_service = UserService(db)
     users = user_service.get_users()
     return users
 
 @router.get("/users/{user_id}", response_model=User)
 def read_user(user_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     user_service = UserService(db)
     db_user = user_service.get_user(user_id)
     if db_user is None:

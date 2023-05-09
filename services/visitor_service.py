@@ -1,7 +1,6 @@
 from typing import List
 from sqlalchemy.sql.expression import Tuple
 from sqlalchemy.orm import Session
-from database import AccessCode
 from schemas.visitor import Visitor, VisitorCreate, VisitorUpdate
 from schemas.visitor_access_code import VisitorAccessCode
 from repositories.access_code_repository import AccessCodeRepository

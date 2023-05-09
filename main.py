@@ -1,12 +1,9 @@
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
-from fastapi.exceptions import HTTPException as FastAPIHTTPException
 from fastapi_jwt_auth import AuthJWT
 from jwt_secret import JWTSettings
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_jwt_auth.exceptions import AuthJWTException
-from pydantic.error_wrappers import ValidationError as PydanticValidationError
 
 # Importing the different routers for the different routes
 from routes.auth import router as auth_router
@@ -15,6 +12,8 @@ from routes.visitor import router as visitor_router
 from routes.tenant import router as tenant_router
 from routes.chat import router as chat_router
 from routes.user import router as user_router
+from routes.support_ticket_type import router as support_ticket_type_router
+from routes.support_ticket import router as support_ticket_router
 
 import uvicorn
 
@@ -57,6 +56,8 @@ app.include_router(auth_router)
 app.include_router(token_router)
 app.include_router(visitor_router)
 app.include_router(tenant_router)
+app.include_router(support_ticket_router)
+app.include_router(support_ticket_type_router)
 app.include_router(chat_router)
 
 # Run the app using uvicorn

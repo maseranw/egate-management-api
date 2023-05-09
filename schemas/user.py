@@ -16,8 +16,6 @@ class UserResponse(UserBase):
 
 class UserCreate(UserBase):
     password: str
-    class Config:
-        orm_mode = True
         
 class UserUpdate(UserBase):
     username: Optional[str] = None

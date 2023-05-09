@@ -10,23 +10,23 @@ from services.access_code_service import AccessCodeService
 from services.user_service import UserService
 from services.visitor_service import VisitorService
 
-router = APIRouter(prefix="/api/AccessCodes", tags=["AccessCode"])
+router = APIRouter(prefix="/api", tags=["AccessCode"])
 
-@router.get('/{access_code_id}', response_model=List[AccessCode])
+@router.get('/access-codes/{access_code_id}', response_model=List[AccessCode])
 def read_access_code(access_code_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+    # auth.jwt_required()
     service = AccessCodeService(db)
     users = service.get_access_code_by_id(access_code_id)
     return users
 
-@router.get("/visitor/{visitor_id}", response_model=List[AccessCode])
+@router.get("/access-codes/visitor/{visitor_id}", response_model=List[AccessCode])
 def read_user(visitor_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     # auth.jwt_required()
     service = AccessCodeService(db)
     access_codes = service.get_access_codes_by_visitor_id(visitor_id)
     return access_codes
 
-@router.get("/tenant/{tenant_id}")
+@router.get("/access-codes/tenant/{tenant_id}")
 def read_user(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     # auth.jwt_required()
     service = AccessCodeService(db)

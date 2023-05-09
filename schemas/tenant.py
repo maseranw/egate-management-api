@@ -12,10 +12,6 @@ class TenantBase(BaseModel):
 
 class TenantCreate(TenantBase):
      user_id: int
-     
-     class Config:
-        orm_mode = True
-
 
 class TenantUpdate(TenantBase):
     firstname: Optional[str] = None

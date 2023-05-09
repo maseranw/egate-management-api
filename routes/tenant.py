@@ -6,25 +6,25 @@ from schemas.tenant import Tenant, TenantCreate, TenantUpdate
 from services.tenant_service import TenantService
 from fastapi_jwt_auth import AuthJWT
 
-router = APIRouter(prefix="/api", tags=["tenant"])
+router = APIRouter(prefix="/api", tags=["Tenant"])
 
 @router.post("/tenants", response_model=Tenant)
 def create_tenant_api(tenant: TenantCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     service = TenantService(db)
     return service.create_tenant(tenant)
 
 
 @router.get("/tenants", response_model=List[Tenant])
 def get_tenants_api(db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     service = TenantService(db)
     return service.get_tenants()
 
 
 @router.get("/tenants/{tenant_id}", response_model=Tenant)
 def get_tenant_api(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     service = TenantService(db)
     db_tenant = service.get_tenant(tenant_id)
     if db_tenant is None:
@@ -34,20 +34,20 @@ def get_tenant_api(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT =
 
 @router.put("/tenants/{tenant_id}", response_model=Tenant)
 def update_tenant_api(tenant_id: int, tenant: TenantUpdate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     service = TenantService(db)
     return service.update_tenant(db, tenant_id, tenant)
 
 
 @router.delete("/tenants/{tenant_id}")
 def delete_tenant_api(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     service = TenantService(db)
     return service.delete_tenant(tenant_id)
 
 @router.get('/protected')
 def partially_protected(Authorize: AuthJWT = Depends(),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -56,7 +56,7 @@ def partially_protected(Authorize: AuthJWT = Depends(),auth: AuthJWT = Depends()
     return {"user": current_user}
 
 def get_current_user_id(auth_jwt: AuthJWT = Depends(),auth: AuthJWT = Depends()):
-    auth.jwt_required()
+     # auth.jwt_required()
     auth_jwt.jwt_required()
     current_user_id = auth_jwt.get_jwt_subject()
     return current_user_id
