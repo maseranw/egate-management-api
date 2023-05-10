@@ -1,7 +1,7 @@
-from sqlalchemy import and_
+from sqlalchemy import and_, exists, select
 from typing import List
 import bcrypt
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased, subqueryload
 from database import AccessCode, User, Visitor
 from datetime import datetime, date, timedelta
 import random
@@ -39,18 +39,41 @@ class AccessCodeRepository:
 
     def get_access_codes_by_tenant_id(self, tenant_id: int):
         today = datetime.now().date()
-        visitors = (
-            self.session.query(Visitor)
+        latest_access_code_subquery = (
+            self.session.query(
+                AccessCode.visitor_id,
+                AccessCode.create_date
+            )
             .filter(
-                and_(
-                    Visitor.tenant_id == tenant_id,
-                    Visitor.create_date >= today,
-                    Visitor.create_date < today + timedelta(days=1),
-                )
+                exists().where(AccessCode.visitor_id == Visitor.id)
+            )
+            .order_by(AccessCode.create_date.desc())
+            .limit(1)
+            .subquery()
+        )
+
+        visitor_alias = aliased(Visitor)
+        access_code_alias = aliased(AccessCode)
+
+        visitors = (
+            self.session.query(visitor_alias, access_code_alias.create_date)
+            .join(latest_access_code_subquery, and_(latest_access_code_subquery.c.visitor_id == visitor_alias.id))
+            .join(access_code_alias, and_(access_code_alias.visitor_id == latest_access_code_subquery.c.visitor_id, access_code_alias.create_date == latest_access_code_subquery.c.create_date))
+            .filter(
+                visitor_alias.tenant_id == tenant_id,
+                access_code_alias.create_date >= today,
+                access_code_alias.create_date < today + timedelta(days=1)
             )
             .all()
         )
-        access_codes = [{"phone": visitor.phone, "time": visitor.access_codes[-1].create_date.strftime('%H:%M'), "access_code": visitor.access_codes[-1].code}
-                        for visitor in visitors
-                        ] 
+
+        access_codes = [
+            {
+                "phone": visitor[0].phone,
+                "time": visitor[0].create_date.strftime('%H:%M'),
+                "access_code": visitor[0].access_codes[-1].code
+            }
+            for visitor in visitors
+        ]
+
         return access_codes
