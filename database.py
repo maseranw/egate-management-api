@@ -40,10 +40,10 @@ class SupportTicket(Base):
     __tablename__ = "support_tickets"
     metadata = metadata
     id = Column(Integer, primary_key=True, index=True,autoincrement=True)
-    type_id = Column(Integer, ForeignKey("support_ticket_types.id"),index=True)
-    tenant_id = Column(Integer, ForeignKey("tenants.id"), index=True)
     description = Column(String)
     status = Column(String)
+    type_id = Column(Integer, ForeignKey("support_ticket_types.id"),index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), index=True)
     created_at = Column(DateTime, default=datetime.datetime.now())
     update_date = Column(DateTime, index=True, default=None)
     ticket_type = relationship("SupportTicketType", back_populates="tickets")
@@ -82,6 +82,7 @@ class Visitor(Base):
     metadata = metadata
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     phone = Column(String, index=True, unique=True, )
+    name = Column(String, index=True)
     tenant_id = Column(Integer, ForeignKey("tenants.id"), index=True)
     car_id = Column(Integer, index=True)
     create_date = Column(DateTime, index=True, default=datetime.datetime.now())

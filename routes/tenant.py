@@ -1,8 +1,9 @@
+import datetime
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException,status
 from sqlalchemy.orm import Session
 from database import get_db
-from schemas.tenant import Tenant, TenantCreate, TenantUpdate
+from schemas.tenant import Tenant, TenantCreate, TenantLogin, TenantLoginResponse, TenantUpdate
 from services.tenant_service import TenantService
 from fastapi_jwt_auth import AuthJWT
 
@@ -45,15 +46,18 @@ def delete_tenant_api(tenant_id: int, db: Session = Depends(get_db),auth: AuthJW
     service = TenantService(db)
     return service.delete_tenant(tenant_id)
 
-@router.get('/protected')
-def partially_protected(Authorize: AuthJWT = Depends(),auth: AuthJWT = Depends()):
-     # auth.jwt_required()
-    try:
-        Authorize.jwt_required()
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Invalid token")
-    current_user = Authorize.get_jwt_subject()
-    return {"user": current_user}
+
+@router.post('/tenants/login', response_model=TenantLoginResponse)
+def login(tenantLogin: TenantLogin, auth_jwt: AuthJWT = Depends(), db: Session = Depends(get_db)):
+    service = TenantService(db)
+    # authenticate tenant
+    tenant = service.authenticate_tenant(tenantLogin.phone, tenantLogin.code)
+    if not tenant:
+        raise HTTPException(status_code=401, detail='Invalid tenant details')
+    # create access token
+    access_token = auth_jwt.create_access_token(subject=tenant.id,expires_time=False)
+    return TenantLoginResponse( access_token = access_token,tenant = tenant)
+
 
 def get_current_user_id(auth_jwt: AuthJWT = Depends(),auth: AuthJWT = Depends()):
      # auth.jwt_required()

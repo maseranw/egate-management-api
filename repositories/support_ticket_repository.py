@@ -9,7 +9,8 @@ class SupportTicketRepository:
 
     def create(self, ticket: SupportTicketCreate):
         db_ticket = SupportTicket(
-            **ticket.dict()
+            **ticket.dict(),
+            status = "New"
         )
         self.session.add(db_ticket)
         self.session.commit()

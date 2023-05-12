@@ -19,6 +19,14 @@ def read_access_code(access_code_id: int, db: Session = Depends(get_db),auth: Au
     users = service.get_access_code_by_id(access_code_id)
     return users
 
+@router.delete('/access-codes/{access_code_id}')
+def delete_access_code(access_code_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+    # auth.jwt_required()
+    service = AccessCodeService(db)
+    results = service.delete_access_code(access_code_id)
+    return results
+
+
 @router.get("/access-codes/visitor/{visitor_id}", response_model=List[AccessCode])
 def read_user(visitor_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     # auth.jwt_required()

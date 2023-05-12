@@ -7,13 +7,13 @@ from schemas.access_code import AccessCode
 class VisitorBase(BaseModel):
     tenant_id: int = None
     phone: str
+    name: str
 
 
 class VisitorCreate(VisitorBase):
     pass
 
 class VisitorUpdate(VisitorBase):
-    phone: str = None
     check_in_time: datetime = None
     check_out_time: datetime = None
     
@@ -26,6 +26,7 @@ class VisitorResponse(VisitorBase):
 class Visitor(BaseModel):
     id: int = None
     phone: Optional[str]
+    name: Optional[str]
     car_id: Optional[int] = None
     create_date: Optional[datetime]
     update_date: datetime = None

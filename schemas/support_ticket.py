@@ -7,7 +7,6 @@ class SupportTicketBase(BaseModel):
     type_id: int
     tenant_id: int
     description: str
-    status: str
 
 class SupportTicketCreate(SupportTicketBase):
     pass

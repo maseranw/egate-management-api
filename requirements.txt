@@ -11,3 +11,5 @@ scikit-learn
 llama-index
 python-jose
 python-dotenv
+fastapi_socketio 
+eventlet

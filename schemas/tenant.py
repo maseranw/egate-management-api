@@ -37,3 +37,13 @@ class Tenant(TenantBase):
 
     class Config:
         orm_mode = True
+        
+class TenantLogin(BaseModel):
+    phone: str
+    code: str
+    
+class TenantLoginResponse(BaseModel):
+    access_token: str
+    tenant: Tenant
+    class Config:
+        orm_mode = True

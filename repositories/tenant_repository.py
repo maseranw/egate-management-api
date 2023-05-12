@@ -27,6 +27,10 @@ class TenantRepository:
 
     def get_tenant_by_id(self, tenant_id: int) -> Tenant:
         return self.session.query(Tenant).filter(Tenant.id == tenant_id).first()
+    
+    def get_user_by_phone_and_code(self, phone: str,code: str) -> Tenant:
+        return self.session.query(Tenant).filter(Tenant.code == code,Tenant.phone == phone).first()
+    
 
     def get_tenant_by_code(self, code: str) -> Tenant:
         return self.session.query(Tenant).filter(Tenant.code == code).first()

@@ -22,3 +22,7 @@ class TenantService:
 
     def delete_tenant(self, tenant_id: int) -> bool:
         return self.tenant_repository.delete_tenant(tenant_id)
+    
+    def authenticate_tenant(self, phone: str, code: str) -> Tenant:
+        # retrieve user from database by username
+        return self.tenant_repository.get_user_by_phone_and_code(phone,code)
