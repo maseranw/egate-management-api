@@ -14,6 +14,7 @@ from routes.chat import router as chat_router
 from routes.user import router as user_router
 from routes.support_ticket_type import router as support_ticket_type_router
 from routes.support_ticket import router as support_ticket_router
+from routes.chat_message import router as chatMessage_router;
 
 import uvicorn
 
@@ -24,8 +25,8 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:8080",
-    "http://localhost:58875",
-    "http://localhost:59989",
+    "http://localhost:3000",
+    "http://localhost:64914",
 ]
 
 # Add CORS middleware
@@ -64,6 +65,7 @@ app.include_router(tenant_router)
 app.include_router(support_ticket_router)
 app.include_router(support_ticket_type_router)
 app.include_router(chat_router)
+app.include_router(chatMessage_router)
 
 # Run the app using uvicorn
 if __name__ == "__main__":

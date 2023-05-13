@@ -115,7 +115,16 @@ class Car(Base):
     create_date = Column(DateTime, index=True)
     update_date = Column(DateTime, index=True)
     
-
+class ChatMessage(Base):
+    __tablename__ = "chat_messagges"
+    metadata = metadata
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    message = Column(String, index=True)
+    username = Column(String, index=True)
+    sender = Column(String, index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), index=True)
+    create_date = Column(DateTime, index=True)
+    
 Base.metadata.create_all(engine)
 
 
