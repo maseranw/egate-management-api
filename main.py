@@ -10,7 +10,6 @@ from routes.auth import router as auth_router
 from routes.access_code import router as token_router
 from routes.visitor import router as visitor_router
 from routes.tenant import router as tenant_router
-from routes.chat import router as chat_router
 from routes.user import router as user_router
 from routes.support_ticket_type import router as support_ticket_type_router
 from routes.support_ticket import router as support_ticket_router
@@ -64,7 +63,6 @@ app.include_router(visitor_router)
 app.include_router(tenant_router)
 app.include_router(support_ticket_router)
 app.include_router(support_ticket_type_router)
-app.include_router(chat_router)
 app.include_router(chatMessage_router)
 
 # Run the app using uvicorn
