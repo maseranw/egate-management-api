@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api", tags=["User"])
 def create_user(user: UserCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
      # auth.jwt_required()
     user_service = UserService(db)
-    db_user = user_service.get_user(user.id)
+    db_user = user_service.get_user_by_username(user.username)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
     return user_service.create_user(user)

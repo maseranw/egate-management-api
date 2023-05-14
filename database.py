@@ -69,6 +69,7 @@ class Tenant(Base):
     lastname = Column(String, index=True)
     phone = Column(String, index=True)
     email = Column(String, index=True)
+    unitNr = Column(String, index=True)
     code = Column(String, unique=True, index=True)
     create_date = Column(DateTime, index=True, default=datetime.datetime.now())
     update_date = Column(DateTime, index=True, default=None)

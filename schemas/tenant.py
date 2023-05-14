@@ -8,6 +8,7 @@ class TenantBase(BaseModel):
     lastname: str
     phone: str
     email: str
+    unitNr: str
 
 
 class TenantCreate(TenantBase):
