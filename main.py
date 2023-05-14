@@ -15,6 +15,16 @@ from routes.support_ticket_type import router as support_ticket_type_router
 from routes.support_ticket import router as support_ticket_router
 from routes.chat_message import router as chatMessage_router;
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+
+clinet_url = os.environ.get('CLIENT_SERVER')
+chat_server_url = os.environ.get('CHAT_SERVER')
+
+
 import uvicorn
 
 # Create a FastAPI instance
@@ -23,9 +33,9 @@ app = FastAPI()
 # Define allowed origins for CORS
 origins = [
     "http://localhost",
-    "http://localhost:8080",
     "http://localhost:3000",
-    "https://egate.onrender.com",
+    clinet_url,
+    chat_server_url,
 ]
 
 # Add CORS middleware
