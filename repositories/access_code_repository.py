@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session, aliased, subqueryload
 from database import AccessCode, User, Visitor
 from datetime import datetime, date, timedelta
 import random
+import pytz
 
 
 class AccessCodeRepository:
@@ -22,7 +23,7 @@ class AccessCodeRepository:
             if not existing_access_code:
                 break
 
-        now = datetime.now()
+        now = pytz.utc.localize(datetime.now())
         midnight = datetime(now.year, now.month, now.day, 23, 59, 59)
 
         db_access_code = AccessCode(
