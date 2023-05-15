@@ -18,7 +18,7 @@ class ChatMessageRepository:
     def create(self, message: ChatMessageCreate) -> ChatMessage:
         db_message = ChatMessage(
             **message.dict(),
-            create_date= datetime.datetime.now()
+            create_date=datetime.datetime.now()
         )
         self.session.add(db_message)
         self.session.commit()
