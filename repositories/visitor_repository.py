@@ -18,9 +18,8 @@ class VisitorRepository:
         return self.session.query(Visitor).filter(Visitor.user_id == user_id).all()
     
     
-    def get_visitor_by_phone(self, phone: str):
-        return self.session.query(Visitor).filter(Visitor.phone == phone).first()
-    
+    def get_visitor_by_phone_and_tenant(self, phone: str, tenant_id: int):
+        return self.session.query(Visitor).filter(Visitor.phone == phone, Visitor.tenant_id == tenant_id).first()
     
     def get_visitors(self):
         return self.session.query(Visitor).all()

@@ -88,8 +88,11 @@ class AccessCodeRepository:
                 "time": visitor[0].access_codes[-1].create_date.strftime('%H:%M'),
                 "access_code": visitor[0].access_codes[-1].code,
                 "access_code_id": visitor[0].access_codes[-1].id,
+                "expiry_date": visitor[0].access_codes[-1].expiry_date,
                 "visitor_id": visitor[0].id,
-                "tenant_id":tenant_id
+                "tenant_id":tenant_id,
+                "visitor": visitor[0],
+                "access": visitor[0].access_codes[-1]
             }
             for visitor in visitors
         ]
