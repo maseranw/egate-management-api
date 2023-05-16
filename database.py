@@ -75,8 +75,9 @@ class Tenant(Base):
     update_date = Column(DateTime, index=True, default=None)
     user_id = Column(Integer, ForeignKey("users.id"), index=True)
     user = relationship("User", back_populates="tenants")
-    visitors = relationship("Visitor", back_populates="tenant")
-    tickets = relationship("SupportTicket", back_populates="tenant")
+    visitors = relationship("Visitor", back_populates="tenant", cascade="all, delete")
+    tickets = relationship("SupportTicket", back_populates="tenant", cascade="all, delete")
+    chat_messagges = relationship("ChatMessage", back_populates="tenant", cascade="all, delete")
 
 class Visitor(Base):
     __tablename__ = "visitors"
@@ -125,6 +126,7 @@ class ChatMessage(Base):
     sender = Column(String, index=True)
     tenant_id = Column(Integer, ForeignKey("tenants.id"), index=True)
     create_date = Column(DateTime, index=True)
+    tenant = relationship("Tenant", back_populates="chat_messagges")
     
 Base.metadata.create_all(engine)
 

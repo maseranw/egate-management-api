@@ -3,7 +3,7 @@ from psycopg2 import IntegrityError
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
-from database import Tenant
+from database import AccessCode, SupportTicket, Tenant, Visitor
 from schemas.tenant import TenantUpdate, TenantCreate
 import secrets
 import string
@@ -56,6 +56,21 @@ class TenantRepository:
         self.session.commit()
         self.session.refresh(db_tenant)
         return db_tenant
+
+    # def delete_tenant(self, tenant_id: int):
+    #     tenant = self.session.query(Tenant).get(tenant_id)
+    #     if tenant:
+    #         # Delete associated data from other tables
+    #         self.session.query(SupportTicket).filter(SupportTicket.tenant_id == tenant_id).delete()
+    #         self.session.query(Visitor).filter(Visitor.tenant_id == tenant_id).delete()
+    #         self.session.query(AccessCode).join(Visitor).filter(Visitor.tenant_id == tenant_id).delete()
+            
+    #         # Delete the tenant
+    #         self.session.delete(tenant)
+    #         self.session.commit()
+            
+    #         return True
+    #     return False
 
     def delete_tenant(self, tenant_id: int) -> bool:
         tenant = self.session.query(Tenant).filter(
