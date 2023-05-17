@@ -34,7 +34,7 @@ def get_visitor_api(visitor_id: int, db: Session = Depends(get_db),auth: AuthJWT
 
 @router.get("/users/visitors/{user_id}", response_model=List[Visitor])
 def get_visitor_api(user_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-     # auth.jwt_required()
+    auth.jwt_required()
     service = VisitorService(db)
     db_visitor = service.get_visitor_by_userId(user_id)
     if db_visitor is None:
@@ -44,13 +44,13 @@ def get_visitor_api(user_id: int, db: Session = Depends(get_db),auth: AuthJWT = 
 
 @router.put("/visitors/{visitor_id}", response_model=Visitor)
 def update_visitor_api(visitor_id: int, visitor: VisitorUpdate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-     # auth.jwt_required()
+    auth.jwt_required()
     service = VisitorService(db)
     return service.update_visitor(db, visitor_id, visitor)
 
 
 @router.delete("/visitors/{visitor_id}")
 def delete_visitor_api(visitor_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-     # auth.jwt_required()
+    auth.jwt_required()
     service = VisitorService(db)
     return service.delete_visitor(db, visitor_id)

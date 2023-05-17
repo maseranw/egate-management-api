@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api", tags=["User"])
 
 @router.post('/users', response_model=User)
 def create_user(user: UserCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-     # auth.jwt_required()
+    auth.jwt_required()
     user_service = UserService(db)
     db_user = user_service.get_user_by_username(user.username)
     if db_user:
@@ -20,7 +20,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db),auth: AuthJWT = 
 
 @router.put("/users/{user_id}", response_model=User)
 def update_user(user_id: int,user: UserUpdate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-     # auth.jwt_required()
+    auth.jwt_required()
     user_service = UserService(db)
     db_user = user_service.get_user(user_id)
     if not db_user:
@@ -36,7 +36,7 @@ def read_users(db: Session = Depends(get_db),auth: AuthJWT = Depends()):
 
 @router.get("/users/{user_id}", response_model=User)
 def read_user(user_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-     # auth.jwt_required()
+    auth.jwt_required()
     user_service = UserService(db)
     db_user = user_service.get_user(user_id)
     if db_user is None:

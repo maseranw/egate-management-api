@@ -14,19 +14,28 @@ class TenantRepository:
         self.session = session
 
     def create_tenant(self, tenant: TenantCreate) -> Tenant:
-        
-        try:
-            code = self.generate_random_code()
-            db_tenant = Tenant(**tenant.dict(),code=code,create_date=datetime.utcnow())
-            self.session.add(db_tenant)
-            self.session.commit()
-            self.session.refresh(db_tenant)
-            return db_tenant
-        except IntegrityError:
-            self.session.rollback()
+        while True:
+            try:
+                code = self.generate_random_code()
+                
+                existing_tenant = self.get_tenant_by_code(code)
+                if not existing_tenant:
+                    db_tenant = Tenant(**tenant.dict(), code=code, create_date=datetime.utcnow())
+                    self.session.add(db_tenant)
+                    self.session.commit()
+                    self.session.refresh(db_tenant)
+                    return db_tenant
+            except IntegrityError:
+                # If an IntegrityError occurs, indicating a code collision, continue the loop to generate a new code
+                self.session.rollback()
+            # Handle the case when a unique code cannot be generated after multiple attempts
+            raise ValueError("Unable to generate a unique code")
 
     def get_tenant_by_id(self, tenant_id: int) -> Tenant:
-        return self.session.query(Tenant).filter(Tenant.id == tenant_id).first()
+        tenant = self.session.query(Tenant).filter(Tenant.id == tenant_id).first()
+        if not tenant:
+            raise self.CustomException(f"Tenant not found with ID: {tenant_id}")
+        return tenant
     
     def get_user_by_phone_and_code(self, phone: str,code: str) -> Tenant:
         return self.session.query(Tenant).filter(Tenant.code == code,Tenant.phone == phone).first()
@@ -57,20 +66,6 @@ class TenantRepository:
         self.session.refresh(db_tenant)
         return db_tenant
 
-    # def delete_tenant(self, tenant_id: int):
-    #     tenant = self.session.query(Tenant).get(tenant_id)
-    #     if tenant:
-    #         # Delete associated data from other tables
-    #         self.session.query(SupportTicket).filter(SupportTicket.tenant_id == tenant_id).delete()
-    #         self.session.query(Visitor).filter(Visitor.tenant_id == tenant_id).delete()
-    #         self.session.query(AccessCode).join(Visitor).filter(Visitor.tenant_id == tenant_id).delete()
-            
-    #         # Delete the tenant
-    #         self.session.delete(tenant)
-    #         self.session.commit()
-            
-    #         return True
-    #     return False
 
     def delete_tenant(self, tenant_id: int) -> bool:
         tenant = self.session.query(Tenant).filter(
@@ -88,3 +83,7 @@ class TenantRepository:
         alphabet = string.ascii_uppercase + string.digits
         code = ''.join(secrets.choice(alphabet) for _ in range(length))
         return code
+    
+    
+    class CustomException(Exception):
+        pass
