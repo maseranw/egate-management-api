@@ -29,7 +29,7 @@ def update_user(user_id: int,user: UserUpdate, db: Session = Depends(get_db),aut
 
 @router.get('/users', response_model=List[User])
 def read_users(db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-     # auth.jwt_required()
+    auth.jwt_required()
     user_service = UserService(db)
     users = user_service.get_users()
     return users
