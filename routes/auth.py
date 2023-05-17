@@ -13,12 +13,12 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 def login(username: str = Query(...), password: str = Query(...), auth_jwt: AuthJWT = Depends(), db: Session = Depends(get_db)):
     userService = UserService(db)
     # authenticate user
-    user_id = userService.authenticate_user(username, password)
-    if not user_id:
+    user = userService.authenticate_user(username, password)
+    if not user:
         raise HTTPException(status_code=401, detail='Invalid username or password')
     # create access token
     expires = datetime.timedelta(days=1)
-    access_token = auth_jwt.create_access_token(subject=user_id,expires_time=expires)
+    access_token = auth_jwt.create_access_token(subject=user.username, expires_time=expires, user_claims={"role": user.user_role.name})
     return {'access_token': access_token}
 
 

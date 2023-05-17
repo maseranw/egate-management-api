@@ -42,3 +42,14 @@ def read_user(user_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depend
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
+
+
+@router.get("/protected")
+def protected_route(auth: AuthJWT = Depends()):
+    auth.jwt_required()
+    allowed_roles = ["admin", "support","manager"]
+    current_user = auth.get_raw_jwt()
+    if current_user.get('role') in allowed_roles:
+        return {"message": "You have access to the protected route as an admin."}
+    else:
+        return {"message": "You don't have access to access this resource"}

@@ -28,12 +28,12 @@ class UserService:
         updated_user = User(password=password)
         return self.user_repository.update_user_password(user_id, updated_user)
     
-    def authenticate_user(self, username: str, password: str) -> int:
+    def authenticate_user(self, username: str, password: str) -> User:
         # retrieve user from database by username
         user = self.user_repository.get_user_by_username(username)
 
         # check password
         if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-            return user.id
+            return user
         else:
             return None

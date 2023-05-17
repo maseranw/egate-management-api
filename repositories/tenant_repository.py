@@ -1,9 +1,8 @@
-from fastapi import HTTPException
 from psycopg2 import IntegrityError
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
-from database import AccessCode, SupportTicket, Tenant, Visitor
+from database import Tenant
 from schemas.tenant import TenantUpdate, TenantCreate
 import secrets
 import string

@@ -7,6 +7,9 @@ from fastapi_jwt_auth.exceptions import AuthJWTException
 
 # Importing the different routers for the different routes
 from routes.auth import router as auth_router
+from routes.estate import router as esate_router
+from routes.user_role import router as user_role_router
+from routes.notification import router as notification_router;
 from routes.access_code import router as token_router
 from routes.visitor import router as visitor_router
 from routes.tenant import router as tenant_router
@@ -67,13 +70,16 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
 
 # Include all routers for their respective routes
 app.include_router(user_router)
+app.include_router(esate_router)
+app.include_router(user_role_router)
+app.include_router(notification_router)
 app.include_router(auth_router)
 app.include_router(token_router)
 app.include_router(visitor_router)
 app.include_router(tenant_router)
 app.include_router(support_ticket_router)
 app.include_router(support_ticket_type_router)
-app.include_router(chatMessage_router)
+app.include_router(chatMessage_router) 
 
 # Run the app using uvicorn
 if __name__ == "__main__":
