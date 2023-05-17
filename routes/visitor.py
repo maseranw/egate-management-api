@@ -11,21 +11,21 @@ router = APIRouter(prefix="/api", tags=["Visitor"])
 
 @router.post("/visitors", response_model=VisitorAccessCode)
 def create_visitor_api(visitor: VisitorCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    #  # auth.jwt_required()
+    auth.jwt_required()
     service = VisitorService(db)
     return service.create_visitor(visitor)
 
 
 @router.get("/visitors", response_model=List[Visitor])
 def get_visitors_api(db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    # auth.jwt_required()
+    auth.jwt_required()
     service = VisitorService(db)
     return service.get_visitors()
 
 
 @router.get("/visitors/{visitor_id}", response_model=Visitor)
 def get_visitor_api(visitor_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    # auth.jwt_required()
+    auth.jwt_required()
     service = VisitorService(db)
     db_visitor = service.get_visitor(visitor_id)
     if db_visitor is None:

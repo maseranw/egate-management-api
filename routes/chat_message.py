@@ -12,11 +12,13 @@ router = APIRouter(prefix="/api", tags=["ChatMessage"])
 
 @router.post("/chat_messages",  response_model=ChatMessage)
 def create_chat_message(chat_message: ChatMessageCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+    # auth.jwt_required()
     service = ChatMessageService(db)
     return service.create(chat_message)
 
 @router.get("/chat_messages/{id}", response_model=ChatMessage)
 def get_chat_message(id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+    # auth.jwt_required()
     service = ChatMessageService(db)
     return service.read(id)
 
@@ -29,5 +31,6 @@ def get_tenants_api(db: Session = Depends(get_db),auth: AuthJWT = Depends()):
 
 @router.delete("/chat_messages/{id}")
 def delete_chat_message(id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+    # auth.jwt_required()
     service = ChatMessageService(db)
     return service.delete(id)

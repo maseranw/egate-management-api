@@ -11,21 +11,21 @@ router = APIRouter(prefix="/api", tags=["Tenant"])
 
 @router.post("/tenants", response_model=TenantResponse)
 def create_tenant_api(tenant: TenantCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    # auth.jwt_required()
+    auth.jwt_required()
     service = TenantService(db)
     return service.create_tenant(tenant)
 
 
 @router.get("/tenants", response_model=List[TenantResponse])
 def get_tenants_api(db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    # auth.jwt_required()
+    auth.jwt_required()
     service = TenantService(db)
     return service.get_tenants()
 
 
 @router.get("/tenants/{tenant_id}", response_model=TenantResponse)
 def get_tenant_api(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
-    # auth.jwt_required()
+    auth.jwt_required()
     service = TenantService(db)
     db_tenant = service.get_tenant(tenant_id)
     if db_tenant is None:
