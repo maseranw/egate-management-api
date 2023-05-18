@@ -1,3 +1,4 @@
+import json
 from typing import List
 from sqlalchemy.orm import Session
 from repositories.estate_repository import EstateRepository
@@ -33,6 +34,14 @@ class TenantService:
     def authenticate_tenant(self, phone: str, code: str) -> TenantResponse:
         tenant = self.tenant_repository.get_user_by_phone_and_code(phone,code)
         return self._map_tenant_with_estate(tenant)
+    
+    
+    async def ws_update_client_tenant_details(self,updated_tenant, tenant_code,tenant_subscriptions):
+        if tenant_code in tenant_subscriptions:
+            updated_tenant_data = {'event': 'tenant_updated', 'tenant': updated_tenant}
+            for websocket in tenant_subscriptions[tenant_code]:
+                tenant_json = json.dumps(updated_tenant_data, indent=4, sort_keys=True, default=str)
+                await websocket.send_json(tenant_json)
     
     
     def _map_tenant_update_with_estate(self, tenant: Tenant) -> TenantUpdateResponse:

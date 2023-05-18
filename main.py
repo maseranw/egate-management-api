@@ -78,7 +78,7 @@ async def get():
                 };
 
                 socket.onmessage = function(event) {
-                    console.log("Received message:", event.data);
+                    console.log(event.data);
                 };
 
                 socket.onclose = function(event) {

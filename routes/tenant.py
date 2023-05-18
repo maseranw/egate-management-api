@@ -46,15 +46,9 @@ async def update_tenant_api(tenant_id: int, tenant: TenantUpdate, db: Session = 
     updated_tenant = service.update_tenant(tenant_id, tenant)
 
     tenant_code = updated_tenant.code
-    
-    if tenant_code in tenant_subscriptions:
-        updated_tenant_data = {'event': 'tenant_updated', 'tenant': updated_tenant.dict()}
-        for websocket in tenant_subscriptions[tenant_code]:
-            tenant_json = json.dumps(updated_tenant_data, indent=4, sort_keys=True, default=str)
-            await websocket.send_json(tenant_json)
+    await service.ws_update_client_tenant_details(updated_tenant, tenant_code,tenant_subscriptions)
             
     return updated_tenant
-
 
 @router.delete("/tenants/{tenant_id}")
 def delete_tenant_api(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
