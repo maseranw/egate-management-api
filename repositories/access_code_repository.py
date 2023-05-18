@@ -27,7 +27,8 @@ class AccessCodeRepository:
             if not existing_access_code:
                 break
 
-        now = date_helper.get_date()
+        sa_timezone = pytz.timezone('Africa/Johannesburg')
+        now = datetime.now(tz=sa_timezone)
         midnight = datetime(now.year, now.month, now.day, 23, 59, 59)
 
         db_access_code = AccessCode(
