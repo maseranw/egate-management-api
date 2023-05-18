@@ -1,4 +1,5 @@
 from typing import List
+import pytz
 from sqlalchemy.orm import Session
 from database import ChatMessage
 import datetime
@@ -16,9 +17,12 @@ class ChatMessageRepository:
         return self.session.query(ChatMessage).get(id)
 
     def create(self, message: ChatMessageCreate) -> ChatMessage:
+        
+        sa_timezone = pytz.timezone('Africa/Johannesburg')
+        now = datetime.datetime.now().astimezone(sa_timezone)
         db_message = ChatMessage(
             **message.dict(),
-            create_date=datetime.datetime.now()
+            create_date=now
         )
         self.session.add(db_message)
         self.session.commit()
