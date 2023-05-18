@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from database import UserRole
+from date_helper import DateHelper
 from schemas.user_role import UserRoleCreate
+
+date_helper = DateHelper()
 
 class UserRoleRepository:
     def __init__(self, session: Session):
@@ -16,7 +19,7 @@ class UserRoleRepository:
         return self.session.query(UserRole).all()
 
     def create_user_role(self, role: UserRoleCreate):
-        db_role = UserRole(name=role.name)
+        db_role = UserRole(name=role.name,)
         self.session.add(db_role)
         self.session.commit()
         self.session.refresh(db_role)

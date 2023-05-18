@@ -1,7 +1,10 @@
+import pytz
 from sqlalchemy.orm import Session
-from datetime import datetime
+from date_helper import DateHelper
 from schemas.support_ticket import SupportTicketCreate, SupportTicketUpdate
 from database import SupportTicket
+
+date_helper = DateHelper()
 
 class SupportTicketRepository:
     def __init__(self, session: Session):
@@ -10,6 +13,7 @@ class SupportTicketRepository:
     def create(self, ticket: SupportTicketCreate):
         db_ticket = SupportTicket(
             **ticket.dict(),
+            created_at=date_helper.get_date(),
             status = "New",
         )
         self.session.add(db_ticket)
@@ -21,7 +25,8 @@ class SupportTicketRepository:
         db_ticket = self.get(ticket.id)
         for field, value in ticket:
             setattr(db_ticket, field, value)
-        db_ticket.update_date = datetime.utcnow
+        
+        db_ticket.update_date = date_helper.get_date()
         self.session.commit()
         self.session.refresh(db_ticket)
         return db_ticket

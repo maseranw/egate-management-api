@@ -2,12 +2,13 @@ from psycopg2 import IntegrityError
 import pytz
 from sqlalchemy.orm import Session
 from typing import List
-from datetime import datetime
 from database import Tenant
+from date_helper import DateHelper
 from schemas.tenant import TenantUpdate, TenantCreate
 import secrets
 import string
 
+date_helper = DateHelper()
 
 class TenantRepository:
     def __init__(self, session: Session):
@@ -18,12 +19,10 @@ class TenantRepository:
             try:
                 code = self.generate_random_code()
                 
-                sa_timezone = pytz.timezone('Africa/Johannesburg')
-                today = datetime.now().astimezone(sa_timezone)
-                
                 existing_tenant = self.get_tenant_by_code(code)
+                
                 if not existing_tenant:
-                    db_tenant = Tenant(**tenant.dict(), code=code, create_date=today)
+                    db_tenant = Tenant(**tenant.dict(), code=code, create_date=date_helper.get_date())
                     self.session.add(db_tenant)
                     self.session.commit()
                     self.session.refresh(db_tenant)
@@ -63,8 +62,8 @@ class TenantRepository:
             if other_tenant and other_tenant.id != tenant_id:
                 raise ValueError("Code already in use")
             db_tenant.code = tenant.code
-
-        db_tenant.update_date = datetime.utcnow()
+        
+        db_tenant.update_date = date_helper.get_date()
         self.session.commit()
         self.session.refresh(db_tenant)
         return db_tenant

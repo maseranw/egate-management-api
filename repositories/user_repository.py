@@ -1,10 +1,12 @@
-import datetime
 from typing import List
 import bcrypt
+import pytz
 from sqlalchemy.orm import Session
 from database import User
+from date_helper import DateHelper
 from schemas.user import UserCreate
 
+date_helper = DateHelper()
 
 class UserRepository:
     def __init__(self, session: Session):
@@ -22,7 +24,7 @@ class UserRepository:
         hashed_password = bcrypt.hashpw(password,self.salt).decode("utf-8")
         user.password = hashed_password
 
-        db_user = User(**user.dict(), create_date=datetime.datetime.now())
+        db_user = User(**user.dict(), create_date=date_helper.get_date())
         self.session.add(db_user)
         self.session.commit()
         self.session.refresh(db_user)
@@ -43,7 +45,7 @@ class UserRepository:
         user.lastname = updated_user.lastname
         user.phone = updated_user.phone
         user.email = updated_user.email
-        user.update_date = datetime.datetime.now()
+        user.update_date = date_helper.get_date()
 
         self.session.commit()
 

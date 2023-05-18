@@ -1,11 +1,13 @@
-import datetime
 from typing import List
 import bcrypt
 from fastapi import HTTPException
 import pytz
 from sqlalchemy.orm import Session
 from database import Visitor
+from date_helper import DateHelper
 from schemas.visitor import VisitorCreate, VisitorUpdate
+
+date_helper = DateHelper()
 
 class VisitorRepository:
     def __init__(self, session: Session):
@@ -26,8 +28,7 @@ class VisitorRepository:
         return self.session.query(Visitor).all()
 
     def create_visitor(self, visitor: VisitorCreate):
-        sa_timezone = pytz.timezone('Africa/Johannesburg')
-        today = datetime.now().astimezone(sa_timezone)
+        today = date_helper.get_date()
         
         db_visitor = Visitor(**visitor.dict(),create_date=today)
         self.session.add(db_visitor)
@@ -43,7 +44,7 @@ class VisitorRepository:
         update_data = visitor.dict(exclude_unset=True)
         for key, value in update_data.items():
             setattr(db_visitor, key, value)
-        db_visitor.update_date = datetime.datetime.now()
+        db_visitor.update_date = date_helper.get_date()
         self.session.commit()
         self.session.refresh(db_visitor)
         return db_visitor

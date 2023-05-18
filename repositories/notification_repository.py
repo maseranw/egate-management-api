@@ -1,9 +1,10 @@
-import datetime
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from database import Notification
+from date_helper import DateHelper
 from schemas.notification import NotificationCreate
 
+date_helper = DateHelper()
 
 class NotificationRepository:
     def __init__(self, session: Session):
@@ -16,7 +17,7 @@ class NotificationRepository:
         return self.session.query(Notification).all()
 
     def create(self, notification: NotificationCreate):
-        db_notification = Notification(**notification.dict())
+        db_notification = Notification(**notification.dict(),create_date=date_helper.get_date())
         self.session.add(db_notification)
         self.session.commit()
         self.session.refresh(db_notification)

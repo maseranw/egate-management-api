@@ -4,10 +4,14 @@ from typing import List
 import bcrypt
 from sqlalchemy.orm import Session, aliased, subqueryload
 from database import AccessCode, User, Visitor
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 import random
 import pytz
 
+from date_helper import DateHelper
+
+
+date_helper = DateHelper()
 
 class AccessCodeRepository:
     def __init__(self, session: Session):
@@ -23,8 +27,7 @@ class AccessCodeRepository:
             if not existing_access_code:
                 break
 
-        sa_timezone = pytz.timezone('Africa/Johannesburg')
-        now = datetime.now().astimezone(sa_timezone)
+        now = date_helper.get_date()
         midnight = datetime(now.year, now.month, now.day, 23, 59, 59)
 
         db_access_code = AccessCode(
@@ -50,8 +53,7 @@ class AccessCodeRepository:
 
     def get_access_codes_by_tenant_id(self, tenant_id: int):
         # Get the current date.
-        sa_timezone = pytz.timezone('Africa/Johannesburg')
-        today = datetime.now().date().astimezone(sa_timezone)
+        today = date_helper.get_date()
 
         # Get the latest access codes for each visitor.
         latest_access_codes_subquery = (

@@ -2,9 +2,11 @@ from typing import List
 import pytz
 from sqlalchemy.orm import Session
 from database import ChatMessage
-import datetime
+from date_helper import DateHelper
 from schemas.chat_message import ChatMessageCreate
 
+
+date_helper = DateHelper()
 
 class ChatMessageRepository:
     def __init__(self, session: Session):
@@ -18,12 +20,11 @@ class ChatMessageRepository:
 
     def create(self, message: ChatMessageCreate) -> ChatMessage:
         
-        sa_timezone = pytz.timezone('Africa/Johannesburg')
-        now = datetime.datetime.now().astimezone(sa_timezone)
         db_message = ChatMessage(
             **message.dict(),
-            create_date=now
+            create_date=date_helper.get_date()
         )
+        
         self.session.add(db_message)
         self.session.commit()
         self.session.refresh(db_message)
