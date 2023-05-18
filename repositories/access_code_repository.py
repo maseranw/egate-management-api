@@ -50,7 +50,8 @@ class AccessCodeRepository:
 
     def get_access_codes_by_tenant_id(self, tenant_id: int):
         # Get the current date.
-        today = datetime.now().date()
+        sa_timezone = pytz.timezone('Africa/Johannesburg')
+        today = datetime.now().date().astimezone(sa_timezone)
 
         # Get the latest access codes for each visitor.
         latest_access_codes_subquery = (
