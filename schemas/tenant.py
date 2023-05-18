@@ -22,6 +22,12 @@ class TenantUpdate(TenantBase):
     code: str
     
 
+class TenantUpdateResponse(TenantBase):
+    id: int
+    code: Optional[str] = None
+    user_id: Optional[int] = None
+    estate_id: Optional[int] = None
+    
 class TenantResponse(TenantBase):
     id: int
     code: Optional[str] = None

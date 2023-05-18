@@ -4,7 +4,7 @@ sqlalchemy
 psycopg2
 fastapi_jwt_auth
 alembic
-uvicorn
+uvicorn[standard]
 numpy
 joblib
 nltk

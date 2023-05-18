@@ -2,7 +2,7 @@ from typing import List
 from sqlalchemy.orm import Session
 from repositories.estate_repository import EstateRepository
 from schemas.estate import EstateResponse, TenantEstateResponse
-from schemas.tenant import TenantCreate, TenantResponse, TenantUpdate
+from schemas.tenant import TenantCreate, TenantResponse, TenantUpdate, TenantUpdateResponse
 from database import Estate, Tenant
 from repositories.tenant_repository import TenantRepository
 
@@ -25,7 +25,7 @@ class TenantService:
 
     def update_tenant(self, tenant_id: int, updated_tenant: TenantUpdate) -> TenantResponse:
         tenant =  self.tenant_repository.update_tenant(tenant_id, updated_tenant)
-        return self._map_tenant_with_estate(tenant)
+        return self._map_tenant_update_with_estate(tenant)
 
     def delete_tenant(self, tenant_id: int) -> bool:
         return self.tenant_repository.delete_tenant(tenant_id)
@@ -34,6 +34,20 @@ class TenantService:
         tenant = self.tenant_repository.get_user_by_phone_and_code(phone,code)
         return self._map_tenant_with_estate(tenant)
     
+    
+    def _map_tenant_update_with_estate(self, tenant: Tenant) -> TenantUpdateResponse:
+        tenant_response = TenantUpdateResponse(
+            id=tenant.id,
+            firstname=tenant.firstname,
+            lastname=tenant.lastname,
+            phone=tenant.phone,
+            email=tenant.email,
+            unitNr=tenant.unitNr,
+            code=tenant.code,
+            user_id=tenant.user_id,
+        )
+        return tenant_response
+        
     def _map_tenant_with_estate(self, tenant: Tenant) -> TenantResponse:
         estate = self.estate_repository.get(tenant.estate_id)
         

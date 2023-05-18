@@ -1,13 +1,18 @@
 import datetime
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, WebSocket,status
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect,status
 from sqlalchemy.orm import Session
 from database import get_db
-from schemas.tenant import Tenant, TenantCreate, TenantLogin, TenantLoginResponse, TenantResponse, TenantUpdate
+from routes.websocket_manager import ConnectionManager
+from schemas.tenant import Tenant, TenantCreate, TenantLogin, TenantLoginResponse, TenantResponse, TenantUpdate, TenantUpdateResponse
 from services.tenant_service import TenantService
 from fastapi_jwt_auth import AuthJWT
 
 router = APIRouter(prefix="/api", tags=["Tenant"])
+
+tenant_subscriptions = {}
+
+manager = ConnectionManager()
 
 @router.post("/tenants", response_model=TenantResponse)
 def create_tenant_api(tenant: TenantCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
@@ -33,15 +38,17 @@ def get_tenant_api(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT =
     return db_tenant
 
 
-@router.put("/tenants/{tenant_id}", response_model=TenantResponse)
+@router.put("/tenants/{tenant_id}", response_model=TenantUpdateResponse)
 async def update_tenant_api(tenant_id: int, tenant: TenantUpdate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     auth.jwt_required()
     service = TenantService(db)
     updated_tenant = service.update_tenant(tenant_id, tenant)
 
-    if updated_tenant.code in tenant_subscriptions:
-        updated_tenant_data = {'event': 'tenant_updated', 'tenant': updated_tenant}
-        for websocket in tenant_subscriptions[tenant_id]:
+    tenant_code = updated_tenant.code
+    
+    if tenant_code in tenant_subscriptions:
+        updated_tenant_data = {'event': 'tenant_updated', 'tenant': updated_tenant.dict()}
+        for websocket in tenant_subscriptions[tenant_code]:
             await websocket.send_json(updated_tenant_data)
             
     return updated_tenant
@@ -65,31 +72,27 @@ def login(tenantLogin: TenantLogin, auth_jwt: AuthJWT = Depends(), db: Session =
     access_token = auth_jwt.create_access_token(subject=tenant.id,expires_time=False)
     return TenantLoginResponse( access_token = access_token,tenant = tenant)
 
-tenant_subscriptions = {}
 
-@router.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket, tenant_code: int):
-    await websocket.accept()
-
-    # Store the WebSocket connection in the tenant_subscriptions dictionary
+@router.websocket("/ws/{tenant_code}")
+async def websocket_endpoint(websocket: WebSocket, tenant_code: str):
+    await manager.connect(websocket)
+    
     if tenant_code in tenant_subscriptions:
         tenant_subscriptions[tenant_code].append(websocket)
     else:
         tenant_subscriptions[tenant_code] = [websocket]
-
+        
     try:
         while True:
-            # Wait for incoming messages from the client (optional)
-            message = await websocket.receive_text()
-            print(f"Received message from client: {message}")
-
-    except Exception as e:
-        print(f"WebSocket error: {e}")
-
-    finally:
-        # Remove the WebSocket connection from the tenant_subscriptions dictionary
+            data = await websocket.receive_text()
+            await manager.send_personal_message(f"You wrote: {data}", websocket)
+            await manager.broadcast(f"Client #{tenant_code} says: {data}")
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
         if tenant_code in tenant_subscriptions:
             tenant_subscriptions[tenant_code].remove(websocket)
+        await manager.broadcast(f"Client #{tenant_code} left the chat")
+        
 
 def get_current_user_id(auth_jwt: AuthJWT = Depends(),auth: AuthJWT = Depends()):
     auth.jwt_required()

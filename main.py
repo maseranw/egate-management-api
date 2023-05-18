@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Request
+from http.client import HTTPResponse
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from jwt_secret import JWTSettings
@@ -17,6 +18,9 @@ from routes.user import router as user_router
 from routes.support_ticket_type import router as support_ticket_type_router
 from routes.support_ticket import router as support_ticket_router
 from routes.chat_message import router as chatMessage_router;
+
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 from dotenv import load_dotenv
 import os
@@ -51,21 +55,42 @@ app.add_middleware(
 )
 
 # Load JWT config
-
-
 @AuthJWT.load_config
 def get_config():
     return JWTSettings()
 
-# Handle AuthJWTExceptions
 
+@app.get("/")
+async def get():
+    return HTMLResponse("""
+    <html>
+        <head>
+            <script>
+            
+                const tenantCode = "BCC3G3J7";  // Replace with your actual tenant code
 
-@app.exception_handler(AuthJWTException)
-def authjwt_exception_handler(request: Request, exc: AuthJWTException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"message": exc.message}
-    )
+                var socket = new WebSocket(`ws://localhost:8000/api/ws/${tenantCode}`);
+              
+
+                socket.onopen = function(event) {
+                    console.log("WebSocket connection opened");
+                    socket.send("Hello, WebSocket!");  // Sending a message
+                };
+
+                socket.onmessage = function(event) {
+                    console.log("Received message:", event.data);
+                };
+
+                socket.onclose = function(event) {
+                    console.log("WebSocket connection closed");
+                };
+            </script>
+        </head>
+        <body>
+            <h1>Gatepasst</h1>
+        </body>
+    </html>
+    """)
 
 
 # Include all routers for their respective routes
