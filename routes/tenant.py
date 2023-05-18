@@ -1,6 +1,6 @@
 import datetime
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException,status
+from fastapi import APIRouter, Depends, HTTPException, WebSocket,status
 from sqlalchemy.orm import Session
 from database import get_db
 from schemas.tenant import Tenant, TenantCreate, TenantLogin, TenantLoginResponse, TenantResponse, TenantUpdate
@@ -34,10 +34,17 @@ def get_tenant_api(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT =
 
 
 @router.put("/tenants/{tenant_id}", response_model=TenantResponse)
-def update_tenant_api(tenant_id: int, tenant: TenantUpdate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+async def update_tenant_api(tenant_id: int, tenant: TenantUpdate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     auth.jwt_required()
     service = TenantService(db)
-    return service.update_tenant(db, tenant_id, tenant)
+    updated_tenant = service.update_tenant(tenant_id, tenant)
+
+    if updated_tenant.code in tenant_subscriptions:
+        updated_tenant_data = {'event': 'tenant_updated', 'tenant': updated_tenant}
+        for websocket in tenant_subscriptions[tenant_id]:
+            await websocket.send_json(updated_tenant_data)
+            
+    return updated_tenant
 
 
 @router.delete("/tenants/{tenant_id}")
@@ -58,6 +65,31 @@ def login(tenantLogin: TenantLogin, auth_jwt: AuthJWT = Depends(), db: Session =
     access_token = auth_jwt.create_access_token(subject=tenant.id,expires_time=False)
     return TenantLoginResponse( access_token = access_token,tenant = tenant)
 
+tenant_subscriptions = {}
+
+@router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket, tenant_code: int):
+    await websocket.accept()
+
+    # Store the WebSocket connection in the tenant_subscriptions dictionary
+    if tenant_code in tenant_subscriptions:
+        tenant_subscriptions[tenant_code].append(websocket)
+    else:
+        tenant_subscriptions[tenant_code] = [websocket]
+
+    try:
+        while True:
+            # Wait for incoming messages from the client (optional)
+            message = await websocket.receive_text()
+            print(f"Received message from client: {message}")
+
+    except Exception as e:
+        print(f"WebSocket error: {e}")
+
+    finally:
+        # Remove the WebSocket connection from the tenant_subscriptions dictionary
+        if tenant_code in tenant_subscriptions:
+            tenant_subscriptions[tenant_code].remove(websocket)
 
 def get_current_user_id(auth_jwt: AuthJWT = Depends(),auth: AuthJWT = Depends()):
     auth.jwt_required()

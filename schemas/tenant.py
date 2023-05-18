@@ -19,10 +19,7 @@ class TenantCreate(TenantBase):
 
 
 class TenantUpdate(TenantBase):
-    firstname: Optional[str] = None
-    lastname: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
+    code: str
     
 
 class TenantResponse(TenantBase):
