@@ -2,6 +2,7 @@ import datetime
 from typing import List
 import bcrypt
 from fastapi import HTTPException
+import pytz
 from sqlalchemy.orm import Session
 from database import Visitor
 from schemas.visitor import VisitorCreate, VisitorUpdate
@@ -25,7 +26,10 @@ class VisitorRepository:
         return self.session.query(Visitor).all()
 
     def create_visitor(self, visitor: VisitorCreate):
-        db_visitor = Visitor(**visitor.dict())
+        sa_timezone = pytz.timezone('Africa/Johannesburg')
+        today = datetime.now().astimezone(sa_timezone)
+        
+        db_visitor = Visitor(**visitor.dict(),create_date=today)
         self.session.add(db_visitor)
         self.session.commit()
         self.session.refresh(db_visitor)

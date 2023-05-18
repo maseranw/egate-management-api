@@ -1,4 +1,5 @@
 from psycopg2 import IntegrityError
+import pytz
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
@@ -17,9 +18,12 @@ class TenantRepository:
             try:
                 code = self.generate_random_code()
                 
+                sa_timezone = pytz.timezone('Africa/Johannesburg')
+                today = datetime.now().astimezone(sa_timezone)
+                
                 existing_tenant = self.get_tenant_by_code(code)
                 if not existing_tenant:
-                    db_tenant = Tenant(**tenant.dict(), code=code, create_date=datetime.utcnow())
+                    db_tenant = Tenant(**tenant.dict(), code=code, create_date=today)
                     self.session.add(db_tenant)
                     self.session.commit()
                     self.session.refresh(db_tenant)
