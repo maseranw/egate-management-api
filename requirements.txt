@@ -12,3 +12,4 @@ scikit-learn
 llama-index
 python-jose
 python-dotenv
+websockets
