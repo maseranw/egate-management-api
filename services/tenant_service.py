@@ -25,7 +25,7 @@ class TenantService:
 
     def update_tenant(self, tenant_id: int, updated_tenant: TenantUpdate) -> TenantResponse:
         tenant =  self.tenant_repository.update_tenant(tenant_id, updated_tenant)
-        return self._map_tenant_update_with_estate(tenant)
+        return self._map_tenant_with_estate(tenant)
 
     def delete_tenant(self, tenant_id: int) -> bool:
         return self.tenant_repository.delete_tenant(tenant_id)

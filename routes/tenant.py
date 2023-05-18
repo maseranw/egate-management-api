@@ -1,4 +1,5 @@
 import datetime
+import json
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect,status
 from sqlalchemy.orm import Session
@@ -38,7 +39,7 @@ def get_tenant_api(tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT =
     return db_tenant
 
 
-@router.put("/tenants/{tenant_id}", response_model=TenantUpdateResponse)
+@router.put("/tenants/{tenant_id}", response_model=TenantResponse)
 async def update_tenant_api(tenant_id: int, tenant: TenantUpdate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     auth.jwt_required()
     service = TenantService(db)
@@ -49,7 +50,8 @@ async def update_tenant_api(tenant_id: int, tenant: TenantUpdate, db: Session = 
     if tenant_code in tenant_subscriptions:
         updated_tenant_data = {'event': 'tenant_updated', 'tenant': updated_tenant.dict()}
         for websocket in tenant_subscriptions[tenant_code]:
-            await websocket.send_json(updated_tenant_data)
+            tenant_json = json.dumps(updated_tenant_data, indent=4, sort_keys=True, default=str)
+            await websocket.send_json(tenant_json)
             
     return updated_tenant
 
