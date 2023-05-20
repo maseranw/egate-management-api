@@ -44,7 +44,7 @@ async def update_tenant_api(tenant_id: int, tenant: TenantUpdate, db: Session = 
     auth.jwt_required()
     service = TenantService(db)
     updated_tenant = service.update_tenant(tenant_id, tenant)
-    await service.ws_update_client_tenant_details(updated_tenant.code)         
+    await service.ws_update_client_tenant_details(updated_tenant.id)         
     return updated_tenant
 
 @router.delete("/tenants/{tenant_id}")
