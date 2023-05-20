@@ -6,13 +6,12 @@ from schemas.visitor import Visitor, VisitorCreate, VisitorUpdate
 from schemas.visitor_access_code import VisitorAccessCode
 from repositories.access_code_repository import AccessCodeRepository
 from repositories.visitor_repository import VisitorRepository
-from routes.websocket_manager import ConnectionManager
+from routes.websocket_manager import manager
 
 class VisitorService:
     def __init__(self, session: Session):
         self.visitor_repository = VisitorRepository(session)
         self.access_code_repository = AccessCodeRepository(session)
-        self.websocket = ConnectionManager()
         
     def get_visitor(self, visitor_id: int) -> Visitor:
         return self.visitor_repository.get_visitor(visitor_id)
@@ -41,4 +40,4 @@ class VisitorService:
     async def ws_visitor_created(self, tenant_id):
             message = {'event': 'visitor_created', 'tenant_id': tenant_id}
             _json = json.dumps(message)
-            await self.websocket.broadcastJson(_json)
+            await manager.broadcastJson(_json)

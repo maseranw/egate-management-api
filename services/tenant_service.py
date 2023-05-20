@@ -2,7 +2,7 @@ import json
 from typing import List
 from sqlalchemy.orm import Session
 from repositories.estate_repository import EstateRepository
-from routes.websocket_manager import ConnectionManager
+from routes.websocket_manager import manager
 from schemas.estate import EstateResponse, TenantEstateResponse
 from schemas.tenant import TenantCreate, TenantResponse, TenantUpdate, TenantUpdateResponse
 from database import Estate, Tenant
@@ -12,7 +12,6 @@ class TenantService:
     def __init__(self, session: Session):
         self.tenant_repository = TenantRepository(session)
         self.estate_repository = EstateRepository(session)
-        self.websocket = ConnectionManager()
 
     def create_tenant(self, new_tenant: TenantCreate) -> Tenant:
         tenant = self.tenant_repository.create_tenant(new_tenant)
@@ -41,7 +40,7 @@ class TenantService:
     async def ws_update_client_tenant_details(self, tenant_id):
             message = {'event': 'tenant_updated', 'tenant_id': tenant_id}
             _json = json.dumps(message)
-            await self.websocket.broadcastJson(_json)
+            await manager.broadcastJson(_json)
     
     
     def _map_tenant_update_with_estate(self, tenant: Tenant) -> TenantUpdateResponse:

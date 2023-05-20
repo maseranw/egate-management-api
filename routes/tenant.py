@@ -4,7 +4,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect,status
 from sqlalchemy.orm import Session
 from database import get_db
-from routes.websocket_manager import ConnectionManager
+from routes.websocket_manager import manager
 from schemas.tenant import Tenant, TenantCreate, TenantLogin, TenantLoginResponse, TenantResponse, TenantUpdate, TenantUpdateResponse
 from services.tenant_service import TenantService
 from fastapi_jwt_auth import AuthJWT
@@ -13,7 +13,6 @@ router = APIRouter(prefix="/api", tags=["Tenant"])
 
 tenant_subscriptions = {}
 
-manager = ConnectionManager()
 
 @router.post("/tenants", response_model=TenantResponse)
 def create_tenant_api(tenant: TenantCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
