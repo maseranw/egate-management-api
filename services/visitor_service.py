@@ -33,11 +33,16 @@ class VisitorService:
     def update_visitor(self,visitor_id: int, visitor: VisitorUpdate) -> Visitor:
         return self.visitor_repository.update_visitor(visitor_id,visitor)
     
-    def delete_visitor(self,visitor_id: int):
+    def delete_visitor(self,visitor_id: int) -> Visitor:
         return self.visitor_repository.delete_visitor(visitor_id)
     
     
     async def ws_visitor_created(self, tenant_id):
             message = {'event': 'visitor_created', 'tenant_id': tenant_id}
+            _json = json.dumps(message)
+            await manager.broadcastJson(_json)
+            
+    async def ws_visitor_deleted(self, tenant_id):
+            message = {'event': 'visitor_deleted', 'tenant_id': tenant_id}
             _json = json.dumps(message)
             await manager.broadcastJson(_json)

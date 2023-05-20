@@ -56,4 +56,4 @@ class VisitorRepository:
             raise HTTPException(status_code=404, detail="visitor not found")
         self.session.delete(db_visitor)
         self.session.commit()
-        return {"message": "visitor deleted successfully"}
+        return db_visitor

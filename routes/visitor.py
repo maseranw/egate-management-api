@@ -52,7 +52,9 @@ def update_visitor_api(visitor_id: int, visitor: VisitorUpdate, db: Session = De
 
 
 @router.delete("/visitors/{visitor_id}")
-def delete_visitor_api(visitor_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+async def delete_visitor_api(visitor_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     auth.jwt_required()
     service = VisitorService(db)
-    return service.delete_visitor(db, visitor_id)
+    visitor = service.delete_visitor(db, visitor_id)
+    await service.ws_visitor_deleted(visitor.tenant_id) 
+    return 'visitor deleted successfully'
