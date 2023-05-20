@@ -68,7 +68,6 @@ def login(tenantLogin: TenantLogin, auth_jwt: AuthJWT = Depends(), db: Session =
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
-    await manager.broadcast('Welcome')
     try:
         while True:
             data = await websocket.receive_text()
