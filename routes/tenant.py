@@ -44,10 +44,7 @@ async def update_tenant_api(tenant_id: int, tenant: TenantUpdate, db: Session = 
     auth.jwt_required()
     service = TenantService(db)
     updated_tenant = service.update_tenant(tenant_id, tenant)
-
-    tenant_code = updated_tenant.code
-    await service.ws_update_client_tenant_details(updated_tenant, tenant_code,tenant_subscriptions)
-            
+    await service.ws_update_client_tenant_details(updated_tenant.code)         
     return updated_tenant
 
 @router.delete("/tenants/{tenant_id}")
@@ -69,25 +66,16 @@ def login(tenantLogin: TenantLogin, auth_jwt: AuthJWT = Depends(), db: Session =
     return TenantLoginResponse( access_token = access_token,tenant = tenant)
 
 
-@router.websocket("/ws/{tenant_code}")
-async def websocket_endpoint(websocket: WebSocket, tenant_code: str):
+@router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
-    
-    if tenant_code in tenant_subscriptions:
-        tenant_subscriptions[tenant_code].append(websocket)
-    else:
-        tenant_subscriptions[tenant_code] = [websocket]
-        
+      
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{tenant_code} says: {data}")
+            await manager.broadcast(data)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        if tenant_code in tenant_subscriptions:
-            tenant_subscriptions[tenant_code].remove(websocket)
-        await manager.broadcast(f"Client #{tenant_code} left the chat")
         
 
 def get_current_user_id(auth_jwt: AuthJWT = Depends(),auth: AuthJWT = Depends()):

@@ -1,3 +1,4 @@
+import json
 from typing import List
 from sqlalchemy.sql.expression import Tuple
 from sqlalchemy.orm import Session
@@ -5,11 +6,13 @@ from schemas.visitor import Visitor, VisitorCreate, VisitorUpdate
 from schemas.visitor_access_code import VisitorAccessCode
 from repositories.access_code_repository import AccessCodeRepository
 from repositories.visitor_repository import VisitorRepository
+from routes.websocket_manager import ConnectionManager
 
 class VisitorService:
     def __init__(self, session: Session):
         self.visitor_repository = VisitorRepository(session)
         self.access_code_repository = AccessCodeRepository(session)
+        self.websocket = ConnectionManager()
         
     def get_visitor(self, visitor_id: int) -> Visitor:
         return self.visitor_repository.get_visitor(visitor_id)
@@ -33,3 +36,9 @@ class VisitorService:
     
     def delete_visitor(self,visitor_id: int):
         return self.visitor_repository.delete_visitor(visitor_id)
+    
+    
+    async def ws_visitor_created(self, tenant_id):
+            message = {'event': 'visitor_created', 'tenant_id': tenant_id}
+            _json = json.dumps(message)
+            await self.websocket.broadcastJson(_json)

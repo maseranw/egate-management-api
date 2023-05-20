@@ -10,10 +10,12 @@ from services.visitor_service import VisitorService
 router = APIRouter(prefix="/api", tags=["Visitor"])
 
 @router.post("/visitors", response_model=VisitorAccessCode)
-def create_visitor_api(visitor: VisitorCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+async def create_visitor_api(visitor: VisitorCreate, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     auth.jwt_required()
     service = VisitorService(db)
-    return service.create_visitor(visitor)
+    _newVisitor = service.create_visitor(visitor)
+    await service.ws_visitor_created(_newVisitor.visitor.tenant_id) 
+    return _newVisitor
 
 
 @router.get("/visitors", response_model=List[Visitor])

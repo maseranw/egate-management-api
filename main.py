@@ -20,7 +20,6 @@ from routes.support_ticket import router as support_ticket_router
 from routes.chat_message import router as chatMessage_router;
 
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 
 from dotenv import load_dotenv
 import os
@@ -58,39 +57,6 @@ app.add_middleware(
 @AuthJWT.load_config
 def get_config():
     return JWTSettings()
-
-
-@app.get("/")
-async def get():
-    return HTMLResponse("""
-    <html>
-        <head>
-            <script>
-            
-                const tenantCode = "BCC3G3J7";  // Replace with your actual tenant code
-
-                var socket = new WebSocket(`ws://localhost:8000/api/ws/${tenantCode}`);
-              
-
-                socket.onopen = function(event) {
-                    console.log("WebSocket connection opened");
-                    socket.send("Hello, WebSocket!");  // Sending a message
-                };
-
-                socket.onmessage = function(event) {
-                    console.log(event.data);
-                };
-
-                socket.onclose = function(event) {
-                    console.log("WebSocket connection closed");
-                };
-            </script>
-        </head>
-        <body>
-            <h1>Gatepasst</h1>
-        </body>
-    </html>
-    """)
 
 
 # Include all routers for their respective routes
