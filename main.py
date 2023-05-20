@@ -19,8 +19,6 @@ from routes.support_ticket_type import router as support_ticket_type_router
 from routes.support_ticket import router as support_ticket_router
 from routes.chat_message import router as chatMessage_router;
 
-from fastapi.responses import HTMLResponse
-
 from dotenv import load_dotenv
 import os
 
