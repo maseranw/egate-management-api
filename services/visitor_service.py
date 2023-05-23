@@ -24,9 +24,7 @@ class VisitorService:
     
     
     def create_visitor(self, visitor_create: VisitorCreate) -> VisitorAccessCode:
-        visitor = self.visitor_repository.get_visitor_by_phone_and_tenant(visitor_create.phone,visitor_create.tenant_id)
-        if visitor is None:
-            visitor =  self.visitor_repository.create_visitor(visitor_create)
+        visitor =  self.visitor_repository.create_visitor(visitor_create)
         access_code = self.access_code_repository.create_access_code(visitor.id)
         return VisitorAccessCode(visitor=visitor,access_code=access_code)
     

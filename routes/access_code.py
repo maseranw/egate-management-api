@@ -19,11 +19,12 @@ def read_access_code(access_code_id: int, db: Session = Depends(get_db),auth: Au
     results = service.get_access_code_by_id(access_code_id)
     return results
 
-@router.delete('/access-codes/{access_code_id}')
-def delete_access_code(access_code_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
+@router.delete('/access-codes/{access_code_id}/{visitor_id}/{tenant_id}')
+async def delete_access_code(access_code_id: int,visitor_id: int,tenant_id: int, db: Session = Depends(get_db),auth: AuthJWT = Depends()):
     auth.jwt_required()
     service = AccessCodeService(db)
-    results = service.delete_access_code(access_code_id)
+    results = service.delete_access_code(access_code_id,visitor_id)
+    await service.ws_visitor_access_deleted(tenant_id) 
     return results
 
 
